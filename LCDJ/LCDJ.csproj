@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <AssemblyName>LCDJ</AssemblyName>
+        <Description>Allows you to play custom music under custom conditions.</Description>
+        <Version>1.0.0</Version>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <LangVersion>latest</LangVersion>
+        <RestoreAdditionalProjectSources>
+            https://api.nuget.org/v3/index.json;
+            https://nuget.bepinex.dev/v3/index.json;
+            https://nuget.samboy.dev/v3/index.json
+        </RestoreAdditionalProjectSources>
+        <RootNamespace>LCDJ</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile" />
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="$(GameDirectoryPath)\BepInEx\interop\*.dll" />
+        <Reference Include="$(GameDirectoryPath)\BepInEx\core\Il2CppInterop*.dll" />
+        <Reference Include="$(GameDirectoryPath)\BepInEx\core\0Harmony.dll" />
+    </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Condition="'$(OS)' == 'Windows_NT'" Command="XCOPY &quot;$(TargetPath)&quot; &quot;$(GameDirectoryPath)\BepInEx\plugins\&quot; /S /Y" />
+        <Exec Condition="'$(OS)' == 'UNIX'" Command="mkdir -p &quot;$(GameDirectoryPath)/BepInEx/plugins/&quot; &amp;&amp; cp -rf &quot;$(TargetPath)&quot; &quot;$(GameDirectoryPath)/BepInEx/plugins/&quot;" />
+    </Target>
+
+    <Import Project="../GamePath.targets" />
+</Project>
